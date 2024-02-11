@@ -20,6 +20,8 @@ function GameBoard() {
     const drawBoard = () => {
         console.log(board.map((row) => (row.map(cell => cell.getValue()))))
     }
+        //Implement the winning check
+        
 
     return {board, setPickedCell, drawBoard}
 }
@@ -53,13 +55,20 @@ function GameController(player1Name = 'Erzsi', player2Name = 'Dezsö') {
     }
 
     const playRound = (row, column) => {
-        console.log(`${getActivePlayer().name}'s turn!`);
-        board.setPickedCell(row, column, getActivePlayer().token);
-        board.drawBoard();
-        switchActivePlayer();
+        if (board.board[row][column].getValue() === '') {
+            board.setPickedCell(row, column, getActivePlayer().token);
+            board.drawBoard();
+            switchActivePlayer();
+            console.log(`${getActivePlayer().name}'s turn!`);
+        } else return
     }
 
-    board.drawBoard()
+    const printNewRound = () => {
+        board.drawBoard();
+        console.log(`${getActivePlayer().name}'s turn!`);
+    }
+
+    printNewRound();
 
     return {board, playRound}
 }
