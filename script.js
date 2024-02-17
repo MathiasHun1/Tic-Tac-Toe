@@ -10,33 +10,31 @@ const gameController = (function() {
     let fields = ['', '', '',  '', '', '',  '', '', '']
     const player1 = players('Bözsi', 'X')
     const player2 = players('Lali', 'O')
-    let winner = ''
+    let endResult = ''
     let round = 1
     let activePlayer = player1
 
-
-    
     const playRound = function(field) {
-        if (fields[field] === 'X' || fields[field] === 'O' || winner !== '') {
+        if (endResult !== '') {
             return false
-        } else {
+        }
+
+        if (fields[field] === '') {
             fields[field] = getActivePlayerSign()
         }
-        
-        checkWinner()
-        
-        if (winner !== '') {
-            console.log(`${winner} wins!`)
-            return 
+
+        if (checkWinner()) {
+            return endResult
         }
-        if (winner === '' && round === 9) {
-            console.log('DRAW')
-            return 
+
+        round++
+
+        if (getRound() > 9) {
+            endResult = 'DRAW' 
+            return endResult
         }
         swithPlayer()
         drawFields()
-        console.log(`${activePlayer.name}'s turn!`, activePlayer.sign)
-        round++
     }
     
     const getActivePlayerSign = function() {
@@ -71,11 +69,11 @@ const gameController = (function() {
         for(let i = 0; i < winConditions.length; i++) {
             if (arrayX.length >= 3 || arrayO.length >= 3) {
                 if (arrayX.toString().includes(winConditions[i].toString())) {
-                    winner = player1.name
+                    endResult = 'X wins'
                     return true
                 }
                 if (arrayO.toString().includes(winConditions[i].toString())) {
-                    winner = player2.name
+                    endResult = 'O wins'
                     return true
                 }
             }
@@ -84,7 +82,7 @@ const gameController = (function() {
 
     const reset = function() {
         fields.fill('', 0, fields.length)
-        winner = ''
+        endResult = ''
         round = 1
         activePlayer = player1
     }
@@ -93,8 +91,8 @@ const gameController = (function() {
         return round
     }
 
-    const getWinner = function() {
-        return winner
+    const getResult = function() {
+        return endResult
     }
 
     //for console
@@ -104,28 +102,27 @@ const gameController = (function() {
         console.log(fields[6], fields[7], fields[8])
     }
 
-    return {getActivePlayerSign, playRound, checkWinner, reset, fields, getRound, getWinner}
+    return {getActivePlayerSign, playRound, checkWinner, reset, fields, getRound, getResult}
 })()
-
-
-
-
 
 
 
 const displayController = (function() {
     const board = document.querySelectorAll('.field')
     const resetButton = document.querySelector('.reset')
-    const result = document.querySelector('.result>h1')
+    const resultButton = document.querySelector('.result>h1')
     
     board.forEach((field) => field.addEventListener('click', (e) => {
         let clickedField = e.target
         let clickedIndex = e.target.getAttribute('id')
         if (clickedField.textContent === '') {
            gameController.playRound(clickedIndex)
-           if (gameController.checkWinner) {
-            result.textContent = gameController.getWinner()
-           }
+        }
+        if (gameController.getResult !== '') {
+            resultButton.textContent = gameController.getResult()
+        } 
+        if (gameController.getRound > 9) {
+            resultButton.textContent = gameController.getResult()
         }
         render()
         
@@ -133,6 +130,7 @@ const displayController = (function() {
 
     resetButton.addEventListener('click', () => {
         gameController.reset()
+        resultButton.textContent = ''
         render()
     })
 
@@ -140,7 +138,7 @@ const displayController = (function() {
         for (let i = 0; i < gameController.fields.length; i++) {
             board[i].textContent = gameController.fields[i]
         }
-        result.textContent = gameController.getWinner()
+        
     }
 
 })()
