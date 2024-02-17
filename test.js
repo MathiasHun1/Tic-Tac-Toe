@@ -24,14 +24,13 @@ const gameController = (function() {
         }
         
         checkWinner()
-        
         if (winner !== '') {
             console.log(`${winner} wins!`)
-            return 
+            return
         }
         if (winner === '' && round === 9) {
             console.log('DRAW')
-            return 
+            return
         }
         swithPlayer()
         drawFields()
@@ -93,10 +92,6 @@ const gameController = (function() {
         return round
     }
 
-    const getWinner = function() {
-        return winner
-    }
-
     //for console
     const drawFields = function() {
         console.log(fields[0], fields[1], fields[2])
@@ -104,7 +99,7 @@ const gameController = (function() {
         console.log(fields[6], fields[7], fields[8])
     }
 
-    return {getActivePlayerSign, playRound, checkWinner, reset, fields, getRound, getWinner}
+    return {getActivePlayerSign, playRound, checkWinner, reset, fields, getRound}
 })()
 
 
@@ -116,16 +111,12 @@ const gameController = (function() {
 const displayController = (function() {
     const board = document.querySelectorAll('.field')
     const resetButton = document.querySelector('.reset')
-    const result = document.querySelector('.result>h1')
     
     board.forEach((field) => field.addEventListener('click', (e) => {
         let clickedField = e.target
         let clickedIndex = e.target.getAttribute('id')
         if (clickedField.textContent === '') {
-           gameController.playRound(clickedIndex)
-           if (gameController.checkWinner) {
-            result.textContent = gameController.getWinner()
-           }
+            gameController.playRound(clickedIndex)
         }
         render()
         
@@ -140,7 +131,6 @@ const displayController = (function() {
         for (let i = 0; i < gameController.fields.length; i++) {
             board[i].textContent = gameController.fields[i]
         }
-        result.textContent = gameController.getWinner()
     }
 
 })()
