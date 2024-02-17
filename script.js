@@ -5,7 +5,6 @@ const players = function(name, sign) {
     
 
 
-
 const gameController = (function() {
     let fields = ['', '', '',  '', '', '',  '', '', '']
     const player1 = players('Bözsi', 'X')
@@ -104,6 +103,9 @@ const gameController = (function() {
 
     return {getActivePlayerSign, playRound, checkWinner, reset, fields, getRound, getResult}
 })()
+
+
+
 
 
 
