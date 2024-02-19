@@ -12,14 +12,17 @@ const gameController = (function() {
     let endResult = ''
     let round = 1
     let activePlayer = player1
+    let winnerIndex = []
 
     const playRound = function(field) {
+        
         if (endResult !== '') {
-            return false
+            return 
         }
-
         if (fields[field] === '') {
             fields[field] = getActivePlayerSign()
+            console.log(fields[field])
+            console.log(getResult())
         }
 
         if (checkWinner()) {
@@ -30,10 +33,9 @@ const gameController = (function() {
 
         if (getRound() > 9) {
             endResult = 'DRAW' 
-            return endResult
         }
         swithPlayer()
-        drawFields()
+        // drawFields()
     }
     
     const getActivePlayerSign = function() {
@@ -64,18 +66,26 @@ const gameController = (function() {
 
         arrayX = filterEquals(fields, 'X')
         arrayO = filterEquals(fields, 'O')
-
-        for(let i = 0; i < winConditions.length; i++) {
-            if (arrayX.length >= 3 || arrayO.length >= 3) {
-                if (arrayX.toString().includes(winConditions[i].toString())) {
-                    endResult = 'X wins'
-                    return true
-                }
-                if (arrayO.toString().includes(winConditions[i].toString())) {
-                    endResult = 'O wins'
-                    return true
+    
+        if (winConditions.some(element => element.every(value => arrayX.includes(value)))) {
+            for (let i = 0; i < winConditions.length; i++) {
+                if (winConditions[i].every(value => arrayX.includes(value))) {
+                    winnerIndex.push(winConditions[i])
                 }
             }
+            endResult = 'X wins'
+            return true
+        }
+
+        if (winConditions.some(element => element.every(value => arrayO.includes(value)))) {
+            for (let i = 0; i < winConditions.length; i++) {
+                if (winConditions[i].every(value => arrayO.includes(value))) {
+                    winnerIndex.push(winConditions[i])
+                }
+            }
+            endResult = 'O wins'
+            winnerIndex.push(arrayO)
+            return true
         }
     }
 
@@ -84,6 +94,7 @@ const gameController = (function() {
         endResult = ''
         round = 1
         activePlayer = player1
+        winnerIndex.length = 0
     }
 
     const getRound = function() {
@@ -101,7 +112,7 @@ const gameController = (function() {
         console.log(fields[6], fields[7], fields[8])
     }
 
-    return {getActivePlayerSign, playRound, checkWinner, reset, fields, getRound, getResult}
+    return {getActivePlayerSign, playRound, checkWinner, reset, fields, getRound, getResult, winnerIndex}
 })()
 
 
@@ -120,10 +131,16 @@ const displayController = (function() {
         if (clickedField.textContent === '') {
            gameController.playRound(clickedIndex)
         }
-        if (gameController.getResult !== '') {
-            resultButton.textContent = gameController.getResult()
+        if (gameController.getResult() !== '') {
+            if (gameController.getResult() === 'DRAW') {
+                resultButton.textContent = gameController.getResult()
+            } else{
+                resultButton.textContent = gameController.getResult()
+                setBackground(board, gameController.winnerIndex)
+            }
+            
         } 
-        if (gameController.getRound > 9) {
+        if (gameController.getRound() === 9) {
             resultButton.textContent = gameController.getResult()
         }
         render()
@@ -133,6 +150,7 @@ const displayController = (function() {
     resetButton.addEventListener('click', () => {
         gameController.reset()
         resultButton.textContent = ''
+        board.forEach((item) => item.style.color = 'black')
         render()
     })
 
@@ -140,7 +158,15 @@ const displayController = (function() {
         for (let i = 0; i < gameController.fields.length; i++) {
             board[i].textContent = gameController.fields[i]
         }
-        
+    }
+
+    const setBackground = function(nodeList, array) {
+        let index = '' 
+        for (let i = 0; i < 3; i++) {
+            index = array[0][i]
+            nodeList.item(index).style.color = 'green'
+            nodeList.item(index).style.borderColor = 'black'
+        }
     }
 
 })()

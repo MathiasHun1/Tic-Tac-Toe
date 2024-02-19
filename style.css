@@ -27,7 +27,7 @@ body {
 
 .container {
     font-size: 50px;
-    border: 1px solid;
+    border: 1px solid black;
     width: 600px;
     height: 600px;
     display: grid;
@@ -42,8 +42,25 @@ body {
     border: 1px solid;
 }
 
+.field:hover {
+    background-color: rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+}
+
 .result {
     height: 100px;
     display: flex;
     align-items: center;
+}
+
+.reset {
+    padding: 1rem;
+    margin-top: 2em;
+    border: none;
+    background-color: beige;
+}
+
+.reset:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+    cursor: pointer;
 }
